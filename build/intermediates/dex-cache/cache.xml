@@ -1,12 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<items version="2" >
-
-    <item
-        jar="/Users/wanxie/cocos2d/workspace/arenaGamecopy/SeatWork/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
-        jumboMode="true"
-        revision="24.0.0"
-        sha1="b7560b462ecab0ea906ab2b2669c4ed19fa760c5">
-        <dex dex="/Users/wanxie/cocos2d/workspace/arenaGamecopy/SeatWork/app/build/intermediates/transforms/dex/debug/folders/1000/10/instant-run-bootstrap_dddd33cbe55b632ed716d727b79f36b17b80b9ad/classes.dex" />
-    </item>
-
-</items>
+<items version="2" />

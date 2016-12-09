@@ -21,22 +21,33 @@ import android.widget.ImageButton;
 import android.view.LayoutInflater;
 import android.widget.TabHost;
 import android.app.TabActivity;
+import android.content.Intent;
+import android.net.wifi.*;
+import android.widget.Toast;
+import android.content.Context;
 
-public class MainActivity  extends TabActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity  extends TabActivity {
     private WebView webView;
+    private WifiManager wifiManager ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        wifiManager = (WifiManager)this.getSystemService(Context.WIFI_SERVICE);
 
         TabHost tah = getTabHost();
+        TabHost.TabSpec spec;
 
+//        LayoutInflater.from(this).inflate(R.layout.activity_main, tah.getTabContentView(), true);
 
-        LayoutInflater.from(this).inflate(R.layout.activity_main, tah.getTabContentView(), true);
+//        tah.addTab(tah.newTabSpec("contacts").setIndicator("通讯录").setContent(R.id.contacts));
+        spec=getTabHost().newTabSpec("contacts");
+        Intent contacts = new Intent(this,Contacts.class);
+        spec.setContent(contacts);
+        spec.setIndicator("contacts");
+        getTabHost().addTab(spec);
 
-        //设置Tab标签的内容和显示内容
-        tah.addTab(tah.newTabSpec("contacts").setIndicator("通讯录").setContent(R.id.contacts));
         tah.addTab(tah.newTabSpec("browser").setIndicator("webView").setContent(R.id.browser));
 
 
@@ -46,31 +57,20 @@ public class MainActivity  extends TabActivity
             public void onClick(View v) {
                 TextInputLayout urlWrapper = (TextInputLayout) findViewById(R.id.urlWrapper);
                 String url = urlWrapper.getEditText().getText().toString();
-                webView = (WebView) findViewById(R.id.webView);
-                webView.loadUrl(url);
-                webView.setWebViewClient(new WebViewClient(){
-                    @Override
-                    public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                        view.loadUrl(url);
-                        return true;
-                    }
+                if(getWifi() == 3){
+                    webView(url);
+                } else {
+                    Toast toast=Toast.makeText(getApplicationContext(), "请检查wifi的状态", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
 
-
-                });
             }
         });
 
-        webView = (WebView) findViewById(R.id.webView);
-        webView.loadUrl("");
-        webView.setWebViewClient(new WebViewClient(){
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl(url);
-                return true;
-            }
+        webView("");
 
 
-        });
+
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -100,43 +100,21 @@ public class MainActivity  extends TabActivity
     }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public int getWifi(){
+        int state = wifiManager.getWifiState();
+        return state;
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+    public void webView(String url){
+        webView = (WebView) findViewById(R.id.webView);
+        webView.loadUrl(url);
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
     }
 }
