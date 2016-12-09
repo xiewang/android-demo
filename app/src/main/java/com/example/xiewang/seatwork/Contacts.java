@@ -30,6 +30,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabase.CursorFactory;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.content.ContentValues;
 
 public class Contacts extends ListActivity {
 
@@ -74,7 +78,7 @@ public class Contacts extends ListActivity {
         myAdapter = new MyListAdapter(this);
         setListAdapter(myAdapter);
 
-
+        setDB();
         super.onCreate(savedInstanceState);
     }
 
@@ -125,6 +129,21 @@ public class Contacts extends ListActivity {
         }
     }
 
+    public void setDB(){
+        SQLiteDatabase db = openOrCreateDatabase("/data/data/com.example.xiewang.seatwork/databases/contacts.db", Context.MODE_PRIVATE, null);
+        db.execSQL("DROP TABLE IF EXISTS list");
+
+        db.execSQL("CREATE TABLE list (_id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR, num SMALLINT)");
+        ContentValues cv = new ContentValues();
+
+        for(int i=0; i< mContactsName.size(); i++){
+            cv.put("name", mContactsName.get(i));
+            cv.put("num", mContactsNumber.get(i));
+            db.insert("list", null, cv);
+        }
+        db.close();
+    }
+
     class MyListAdapter extends BaseAdapter {
         public MyListAdapter(Context context) {
             mContext = context;
@@ -159,11 +178,9 @@ public class Contacts extends ListActivity {
                 title = (TextView) convertView.findViewById(R.id.color_title);
                 text = (TextView) convertView.findViewById(R.id.color_text);
             }
-// 绘制联系人名称
+
             title.setText(mContactsName.get(position));
-// 绘制联系人号码
             text.setText(mContactsNumber.get(position));
-// 绘制联系人头像
             iamge.setImageBitmap(mContactsPhonto.get(position));
             return convertView;
         }
